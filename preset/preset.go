@@ -16,8 +16,8 @@ type ItemType string
 type Frequency string
 
 const (
-	Custom PresetID = iota
-	ElReto
+	CustomPreset PresetID = iota
+	ElRetoPreset
 )
 
 const (
@@ -73,20 +73,20 @@ func (p *Preset) String() string {
 
 type Stats struct {
 	NumCards int
-        NumGoldCards int
-        NumAllyCards int
-        NumTalismanCards int
-        NumWeaponCards int
-        NumTotemCards int
-        Elements Elements
-        IsLoaded bool
-        Allies []Item
-        Talismans []Item
-        Golds []Item
-        Vasals []Item
-        Cortesans []Item
-        Royals []Item
-        NoFreq []Item
+	NumGoldCards int
+	NumAllyCards int
+	NumTalismanCards int
+	NumWeaponCards int
+	NumTotemCards int
+	Elements Elements
+	IsLoaded bool
+	Allies []Item
+	Talismans []Item
+	Golds []Item
+	Vasals []Item
+	Cortesans []Item
+	Royals []Item
+	NoFreq []Item
 }
 
 func (s *Stats) String() string {
@@ -108,8 +108,8 @@ func NewPreset(presetID PresetID, seed *int) (*Preset, error) {
 		Rand: *rand,
 	}
 	switch presetID {
-	case ElReto:
-		preset.ID = ElReto
+	case ElRetoPreset:
+		preset.ID = ElRetoPreset
 		preset.Name = "El Reto"
 		preset.IsOfficial = true
 		preset.FixtureSlug = "el_reto"
@@ -200,21 +200,18 @@ func (p *Preset) loadPresetStats() error {
 }
 
 func (p *Preset) GetRandomGold() Item {
-	// Get random index of gold items
-	idx := p.Rand.GetInt(len(p.Stats.Golds))
-	element := p.Stats.Golds[idx]
-	return element
+	return p.getRandomItemFromSlice(p.Stats.Golds)
 }
 
 func (p *Preset) GetRandomTalisman() Item {
-	idx := p.Rand.GetInt(len(p.Stats.Talismans))
-	element := p.Stats.Talismans[idx]
-	return element
+	return p.getRandomItemFromSlice(p.Stats.Talismans)
 }
 
 func (p *Preset) GetRandomAlly() Item {
-	newRand, _ := utils.GenerateRand(nil)
-	idx := newRand.GetInt(len(p.Stats.Allies))
-	element := p.Stats.Allies[idx]
-	return element
+	return p.getRandomItemFromSlice(p.Stats.Allies)
+}
+
+func (p *Preset) getRandomItemFromSlice(slice []Item) Item{
+	idx := p.Rand.GetInt(len(slice))
+	return slice[idx]
 }

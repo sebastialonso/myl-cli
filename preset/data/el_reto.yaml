@@ -157,7 +157,7 @@
   strength: 1
   cost: 1
 - name: Prometeo
-  code: ELR-02%-126
+  code: ELR-025-126
   type: ally
   number: 25
   frequency: vasallo

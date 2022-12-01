@@ -2,7 +2,7 @@ package input
 
 import (
 	"bufio"
-        "fmt"
+    "fmt"
 	"strings"
 	"log"
 	"os"
@@ -12,6 +12,16 @@ const (
 	newLineStr = "\n"
 	newLineRune = '\n'
 )
+
+type Input interface {
+	WaitForCommand() (Command, error)
+}
+
+type input struct {}
+
+func NewInput() (Input, error) {
+	return &input{}, nil
+}
 
 func GetStdinReader() (*bufio.Reader, error) {
 	return bufio.NewReader(os.Stdin), nil
@@ -39,4 +49,21 @@ func WaitForInput() {
 	fmt.Println(cmd)
 	fmt.Println(cmd.Translate())
 	
+}
+
+func (i *input) WaitForCommand() (Command, error) {
+	reader, err := GetStdinReader()
+	if err != nil {
+		return nil, err
+	}
+	line, err := reader.ReadString(newLineRune)
+	if err != nil {
+		return nil, err
+	}
+	line = trimInput(line)
+	cmd, err := NewCommand(line) 
+	if err != nil {
+		return nil, err
+	}
+	return cmd, nil
 }

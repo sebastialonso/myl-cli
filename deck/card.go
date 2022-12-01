@@ -11,6 +11,7 @@ import (
 type Card struct {
 	UUID uuid.UUID
 	Code common.Code
+	Name string
 }
 
 func (c *Card) String() string {
@@ -30,5 +31,6 @@ func ItemToCard(item preset.Item) Card {
 	return Card{
 		UUID: utils.NewUUID4(),
 		Code: item.Code,
+		Name: item.Name,
 	}
 }

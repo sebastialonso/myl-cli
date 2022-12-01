@@ -15,6 +15,7 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/qmuntal/stateless v1.6.1 // indirect
 	github.com/rivo/tview v0.0.0-20221117065207-09f052e6ca98 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
