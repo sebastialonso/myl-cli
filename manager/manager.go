@@ -55,18 +55,12 @@ func NewManager() (Manager, error) {
 	}, nil
 }
 
-func (m *manager) SayHi() {
-	fmt.Println("Hi from manager")
-	fmt.Println(fmt.Sprintf("Current state: %s", m.StateMachine.GetCurrentTranslated()))	
-}
-
 func (m *manager) WaitForUserInput() (input.Command, error) {
 	return m.Input.WaitForCommand()
 }
 
 func (m *manager) Run() error {
 	// build decks
-	fmt.Println(fmt.Sprintf("Current state: %s", m.StateMachine.GetCurrentTranslated()))
 	err := m.CreateDeckForAlpha()
 	if err != nil {
 		return err
@@ -76,7 +70,7 @@ func (m *manager) Run() error {
 	if err != nil {
 		return err
 	}
-	// update states
+	
 	// start game
 	for !m.playerQuitted {
 		fmt.Println("waiting for input...")
@@ -118,27 +112,21 @@ func (m *manager) CreateAndProposeHandForAlpha() error {
 		if err != nil {
 			return err
 		}
-		m.log.Output("This is the proposed hand:")
-		proposedHand := ""
-		for _, cardCode := range hand.List() {
-			proposedHand += fmt.Sprintf("%s\n", cardCode)
-		}
-		m.log.Raw(proposedHand)
-		m.log.Output("You can redraw your proposed hand, but it will contain one less card.")
-		m.log.Output("Do you want to keep this hand? [y/n]")
-		command, err := m.WaitForUserInput()
-		if err != nil {
-			return err
-		}
-		switch {
-		case command.IsYes():
-			m.alphaAcceptedHand = true
-		case command.IsNo():
-			attemptNumber++
-			m.log.Output("Dealing new hand...")
-		default:
-			fmt.Println("Not implemented")
-		}
+
+		m.log.ProposeHand(hand.List())
+		// m.StateMachine.Fire(state.TriggerHandProposed)
+		m.Input.HandleYesOrNo(
+			func() {
+				m.alphaAcceptedHand = true 
+				m.World.Alpha.Hand = hand
+				// m.Builder.RemoveHandFromDeck(deck, hand)
+				// m.StateMachine.Fire(state.triggerHandAccepted)
+			},
+			func() {
+				attemptNumber++
+				// m.StateMachine.Fire(state.triggerHandRejected)
+				m.log.Output("Dealing new hand...")
+		})
 		
 	}
 	return nil

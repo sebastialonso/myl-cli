@@ -15,13 +15,8 @@ type Field struct {
 	// AttackLine
 }
 
-type Hand struct {
-	Limit int
-	Cards deck.Cards
-}
-
 type Player struct {
-	Hand Hand
+	Hand deck.Hand
 	Field Field
 }
 

@@ -15,6 +15,10 @@ const (
 
 type Input interface {
 	WaitForCommand() (Command, error)
+	HandleYesOrNo(
+		whenYes func(),
+		whenNo func(),
+	)
 }
 
 type input struct {}
@@ -66,4 +70,27 @@ func (i *input) WaitForCommand() (Command, error) {
 		return nil, err
 	}
 	return cmd, nil
+}
+
+func (i *input) HandleYesOrNo(
+	whenYes func(),
+	whenNo func(),
+) {
+	interactionInProgress := true
+	for interactionInProgress {
+		command, err := i.WaitForCommand()
+		if err != nil {
+			continue
+		}
+		switch {
+		case command.IsYes():
+			whenYes()
+			interactionInProgress = false
+		case command.IsNo():
+			whenNo()
+			interactionInProgress = false
+		default:
+			continue
+		}
+	}
 }
