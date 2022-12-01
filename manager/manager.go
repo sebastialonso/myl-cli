@@ -9,7 +9,6 @@ import (
 )
 
 type Manager interface {
-	SayHi()
 	WaitForUserInput() (input.Command, error)
 	Run() error
 }
