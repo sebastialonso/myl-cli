@@ -5,24 +5,19 @@ import (
 	"myl/preset"
 	"errors"
 	"fmt"
+	"myl/deck/types"
 )
 
-type Builder interface {
-	Build() (Deck, error)
-	BuildHand(deck Deck, size *int) (Hand, error)
-	GetHandConfig() HandConfig
-}
-
 type builder struct {
-	DeckCfg DeckConfig
-	HandCfg HandConfig
+	DeckCfg types.DeckConfig
+	HandCfg types.HandConfig
 	preset *preset.Preset
 	rand utils.Rand
 }
 
 func NewBuilder(
-	dCfg DeckConfig,
-	hCfg HandConfig,
+	dCfg types.DeckConfig,
+	hCfg types.HandConfig,
 ) (Builder, error) {
 	newPreset, err := preset.NewPreset(dCfg.PresetID, nil)
 	if err != nil {
@@ -42,7 +37,7 @@ func NewBuilder(
 }
 
 func (b *builder) Build() (Deck, error) {
-	deck := newBaseDeck(b.DeckCfg)
+	deck := newDeck(b.DeckCfg)
 	for i := 0; i < b.DeckCfg.Size; i++ {
 		sample := b.rand.GetInt(1000)
 		item, err := b.drawPresetItemBySample(sample)
@@ -59,7 +54,7 @@ func (b *builder) BuildHand(deck Deck, size *int) (Hand, error) {
 	if size != nil {
 		_size = *size
 	}
-	hand := newBaseHand(_size)
+	hand := newHand(_size)
 	for i := 0; i < hand.Size(); i++ {
 		card, err := b.getRandomCardFromDeck(deck)
 		if err != nil {
@@ -74,18 +69,18 @@ func (b *builder) BuildHand(deck Deck, size *int) (Hand, error) {
 	return hand, nil
 }
 
-func (b *builder) GetHandConfig() HandConfig {
+func (b *builder) GetHandConfig() types.HandConfig {
 	return b.HandCfg
 }
 
 // TODO Move preset.Item to better package
 func (b *builder) drawPresetItemBySample(sample int) (preset.Item, error) {
 	switch {
-	case b.DeckCfg.GoldInterval.min <= sample && sample < b.DeckCfg.GoldInterval.max:
+	case b.DeckCfg.GoldInterval.Min <= sample && sample < b.DeckCfg.GoldInterval.Max:
 		return b.preset.GetRandomGold(), nil
-	case b.DeckCfg.AllyInterval.min <= sample && sample < b.DeckCfg.AllyInterval.max:
+	case b.DeckCfg.AllyInterval.Min <= sample && sample < b.DeckCfg.AllyInterval.Max:
 		return b.preset.GetRandomAlly(), nil
-	case b.DeckCfg.TalismanInterval.min <= sample && sample < b.DeckCfg.TalismanInterval.max:
+	case b.DeckCfg.TalismanInterval.Min <= sample && sample < b.DeckCfg.TalismanInterval.Max:
 		return b.preset.GetRandomTalisman(), nil
 	default:
 		// TODO turn into error
@@ -93,7 +88,7 @@ func (b *builder) drawPresetItemBySample(sample int) (preset.Item, error) {
 	}
 }
 
-func (b *builder) getRandomCardFromDeck(deck Deck) (*Card, error) {
+func (b *builder) getRandomCardFromDeck(deck Deck) (*types.Card, error) {
 	idx := b.rand.GetInt(deck.Size())
 	return deck.GetCardAtIndex(idx)
 }

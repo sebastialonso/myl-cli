@@ -58,7 +58,6 @@ func start() {
     if err != nil {
         log.Fatal(err.Error())
     }
-    manager.SayHi()
     command, err := manager.WaitForUserInput()
     if err != nil {
         log.Fatal(err.Error())
