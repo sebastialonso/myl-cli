@@ -10,8 +10,7 @@ type Deck interface {
     RemoveCard(c Card)
     Count() int
     Size() int
-    GetCardAtIndex(index int) (*Card, error)
-    
+    GetCardAtIndex(index int) (*Card, error)    
 }
 
 type Hand interface {
@@ -20,4 +19,5 @@ type Hand interface {
     List() []string
     Count() int
     Size() int
+    Cards() []Card
 }

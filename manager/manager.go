@@ -113,31 +113,21 @@ func (m *manager) CreateAndProposeHandForAlpha() error {
 		}
 
 		m.log.ProposeHand(hand.List())
-		// m.StateMachine.Fire(state.TriggerHandProposed)
+		m.StateMachine.Fire(state.TriggerProposeHand)
 		m.Input.HandleYesOrNo(
 			func() {
 				m.alphaAcceptedHand = true 
 				m.World.Alpha.Hand = hand
-				// m.Builder.RemoveHandFromDeck(deck, hand)
-				// m.StateMachine.Fire(state.triggerHandAccepted)
+				alphaDeck = m.AlphaBuilder.RemoveHandFromDeck(alphaDeck, hand)
+				m.World.Alpha.Field.Deck = alphaDeck
+				m.StateMachine.Fire(state.TriggerAcceptHand)
 			},
 			func() {
 				attemptNumber++
-				// m.StateMachine.Fire(state.triggerHandRejected)
+				m.StateMachine.Fire(state.TriggerRejectHand)
 				m.log.Output("Dealing new hand...")
 		})
 		
 	}
 	return nil
-	// while a hand isn't accepted:
-	// Sample a hand from Deck
-	// List() the Hand
-	// Fire TriggerProposeHand and move state
-	// Wait for user input
-	// If accepted:
-	// * assign hand to world object
-	// * from world, take deck and remove cards in hand from deck
-	// * fire TriggerAcceptHand and move state
-	// If rejected:
-	// 
 }

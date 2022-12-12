@@ -21,7 +21,7 @@ func newBaseDeck(cfg DeckConfig) Deck {
     }
 }
 
-func (d deck) String() string {
+func (d *deck) String() string {
     cardStr := "["
     for _, card := range d.Cards {
         cardStr += card.String()
@@ -34,10 +34,6 @@ func (d deck) String() string {
 func (d *deck) AddCardFromItem(item preset.Item) {
     // TODO Turn ItemToCard into item.ToCard, with Item an interface for better testing
     d.Cards = append(d.Cards, ItemToCard(item))
-}
-
-func (d *deck) RemoveCard(c Card) {
-    return
 }
 
 func (d *deck) Size() int {
@@ -54,6 +50,16 @@ func (d *deck) GetCardAtIndex(index int) (*Card, error) {
     }
     card := d.Cards[index]
     return &card, nil
+}
+
+func (d *deck) RemoveCard(c Card) {
+    auxCards := d.Cards[:0]
+    for _, card := range d.Cards {
+        if card.UUID != c.UUID {
+            auxCards = append(auxCards, card)
+        }
+    }
+    d.Cards = auxCards
 }
 
 type hand struct {
@@ -110,4 +116,8 @@ func (h *hand) HasByUUID(uuid uuid.UUID) bool {
         }
     }
     return false
+}
+
+func (h *hand) Cards() []Card {
+    return h.cards
 }

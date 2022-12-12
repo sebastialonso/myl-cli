@@ -10,6 +10,7 @@ import (
 type Builder interface {
 	Build() (Deck, error)
 	BuildHand(deck Deck, size *int) (Hand, error)
+	RemoveHandFromDeck(deck Deck, hand Hand) Deck
 	GetHandConfig() HandConfig
 }
 
@@ -76,6 +77,13 @@ func (b *builder) BuildHand(deck Deck, size *int) (Hand, error) {
 
 func (b *builder) GetHandConfig() HandConfig {
 	return b.HandCfg
+}
+
+func (b *builder) RemoveHandFromDeck(deck Deck, hand Hand) Deck {
+	for _, card := range hand.Cards() {
+		deck.RemoveCard(card)
+	}
+	return deck
 }
 
 // TODO Move preset.Item to better package

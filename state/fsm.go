@@ -110,6 +110,12 @@ func NewMachine() (Machine, error) {
         Permit(TriggerRejectHand, StateDeckReady).
         Permit(TriggerAcceptHand, StateHandConfirmed)
     
+    machine.Configure(StateHandConfirmed).
+        OnEntry(func(_ context.Context, _ ...interface{}) error {
+            print(stateToSigil(StateHandConfirmed))
+            return nil
+        })
+    
     return &fsm{
         StateMachine: *machine,
     }, nil
@@ -144,6 +150,8 @@ func stateToSigil(state State) string {
         return stateDeckReadySigil
     case StateHandProposed:
         return stateHandProposedSigil
+    case StateHandConfirmed:
+        return stateHandConfirmedSigil
     default:
         return stateInvalidSigil
     }
